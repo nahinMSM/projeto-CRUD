@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: 'https://projeto-crud-hjzh.vercel.app/intens',
+  baseURL: 'projeto-crud-backend.vercel.app/intens',
   headers: {
     'Content-Type': 'application/json',
   },
