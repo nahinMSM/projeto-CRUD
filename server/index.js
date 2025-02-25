@@ -11,7 +11,11 @@ const pool = new Pool({
   port: 5432,
 });
 
-app.use(cors());
+app.use(cors({
+  origin: 'https://seu-frontend.vercel.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 app.use(express.json());
 
 app.post('/intens', async (req, res) => {
