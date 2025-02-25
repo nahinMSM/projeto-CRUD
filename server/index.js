@@ -4,17 +4,16 @@ const { Pool } = require('pg');
 
 const app = express();
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'projeto_db',
-  password: '1234',
-  port: 5432,
+  connectionString: process.env.DATABASE_URL,  // Vercel usará isso para conectar
+  ssl: {
+    rejectUnauthorized: false // Necessário para rodar em produção
+  }
 });
 
 app.use(cors());
 app.use(express.json());
 
-app.post('/intens', async (req, res) => {
+app.post('/api/intens', async (req, res) => {
   const { title, description } = req.body;
   try {
     await pool.query('INSERT INTO intens (title, description) VALUES ($1, $2)', [
@@ -39,10 +38,10 @@ app.get('/intens', async (req, res) => {
 });
 
 // Rota de busca: GET /items?search=texto
-app.get('/items', async (req, res) => {
+app.get('/api/intens', async (req, res) => {
   const { search } = req.query;
   try {
-    let query = 'SELECT * FROM items';
+    let query = 'SELECT * FROM intens';
     const params = [];
     if (search) {
       query += ' WHERE title ILIKE $1 OR description ILIKE $1';
@@ -56,7 +55,7 @@ app.get('/items', async (req, res) => {
   }
 });
 
-app.put('/intens/:id', async (req, res) => {
+app.put('/api/intens/:id', async (req, res) => {
   const { id } = req.params;
   const { title, description } = req.body;
   try {
@@ -71,7 +70,7 @@ app.put('/intens/:id', async (req, res) => {
   }
 })
 
-app.delete('/intens/:id', async (req, res) => {
+app.delete('/api/intens/:id', async (req, res) => {
   const { id } = req.params;
   try {
     await pool.query('DELETE FROM intens WHERE id = $1', [id]);
@@ -82,6 +81,4 @@ app.delete('/intens/:id', async (req, res) => {
   }
 })
 
-app.listen(5000, () => {
-  console.log('Servidor rodando na porta http://localhost:5000');
-});
+module.exports = app;
