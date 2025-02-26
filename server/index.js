@@ -4,16 +4,16 @@ const { Pool } = require('pg');
 
 const app = express();
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,  // Vercel usará isso para conectar
+  connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false // Necessário para rodar em produção
-  }
+    rejectUnauthorized: false,
+  },
 });
 
 app.use(cors());
 app.use(express.json());
 
-app.post('/api/intens', async (req, res) => {
+app.post('/intens', async (req, res) => {
   const { title, description } = req.body;
   try {
     await pool.query('INSERT INTO intens (title, description) VALUES ($1, $2)', [
@@ -27,35 +27,27 @@ app.post('/api/intens', async (req, res) => {
   }
 });
 
-app.get('/intens', async (req, res) => {
+app.get("/intens", async (req, res) => {
+  const { search } = req.query; // Busca opcional
   try {
-    const result = await pool.query('SELECT * FROM intens');
-    res.json(result.rows);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('server não encontrado');
-  }
-});
-
-// Rota de busca: GET /items?search=texto
-app.get('/api/intens', async (req, res) => {
-  const { search } = req.query;
-  try {
-    let query = 'SELECT * FROM intens';
+    let query = "SELECT * FROM intens";
     const params = [];
+
     if (search) {
-      query += ' WHERE title ILIKE $1 OR description ILIKE $1';
+      query += " WHERE title ILIKE $1 OR description ILIKE $1";
       params.push(`%${search}%`);
     }
+
     const result = await pool.query(query, params);
     res.json(result.rows);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Server error');
+    res.status(500).send("Erro no servidor");
   }
 });
 
-app.put('/api/intens/:id', async (req, res) => {
+
+app.put('/intens/:id', async (req, res) => {
   const { id } = req.params;
   const { title, description } = req.body;
   try {
@@ -70,7 +62,7 @@ app.put('/api/intens/:id', async (req, res) => {
   }
 })
 
-app.delete('/api/intens/:id', async (req, res) => {
+app.delete('/intens/:id', async (req, res) => {
   const { id } = req.params;
   try {
     await pool.query('DELETE FROM intens WHERE id = $1', [id]);
@@ -81,4 +73,6 @@ app.delete('/api/intens/:id', async (req, res) => {
   }
 })
 
-module.exports = app;
+app.listen(5000, () => {
+  console.log('Servidor rodando na porta: http://localhost:5000');
+});
