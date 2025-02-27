@@ -10,6 +10,12 @@ projeto-CRUD/
 │-- server/    # Backend (Node.js, Express, PostgreSQL)
 │-- README.md  # Documentação do projeto
 ```
+<video width="640" height="360" controls>
+  <source src="app/src/assets/captura-de-tela.mp4" type="video/mp4">
+</video>
+
+## [Porjeto Ativo](https://projeto-crud-1.onrender.com/)
+<br>
 
 ## Tecnologias Utilizadas
 ### Frontend (pasta `app`)
